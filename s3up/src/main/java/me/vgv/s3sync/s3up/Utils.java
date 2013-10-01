@@ -1,24 +1,23 @@
-package me.vgv.s3up;
+package me.vgv.s3sync.s3up;
 
 import com.amazonaws.util.DateUtils;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.Closeables;
 import me.vgv.s3sync.common.FatalException;
-import me.vgv.s3up.config.Config;
 import me.vgv.s3sync.common.config.S3Settings;
+import me.vgv.s3sync.s3up.config.Config;
 import org.apache.commons.cli.*;
-import org.apache.commons.cli.ParseException;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * @author Vasily Vasilkov (vgv@vgv.me)
  */
-public class Utils {
+public final class Utils {
 
 	public static Date parseExpiresDate(String expires) {
 		final long DAY = 1000L * 86400;
@@ -48,7 +47,7 @@ public class Utils {
 
 	public static List<UploadFile> parseUploadFiles(CommandLine commandLine) {
 		// key
-		String key = extractRequiredOption(commandLine, "key");
+		String key = me.vgv.s3sync.common.Utils.extractRequiredOption(commandLine, "key");
 		if (key == null) {
 			throw new FatalException("'key' parameter not found");
 		} else {
@@ -58,7 +57,7 @@ public class Utils {
 		}
 
 		// local file or folder
-		String local = extractRequiredOption(commandLine, "local");
+		String local = me.vgv.s3sync.common.Utils.extractRequiredOption(commandLine, "local");
 		if (local == null) {
 			throw new FatalException("'local' parameter not found");
 		}
@@ -150,34 +149,6 @@ public class Utils {
 		List<UploadFile> uploadFiles = parseUploadFiles(commandLine);
 
 		return new Config(s3Settings, threads, gzipped, uploadFiles, rrs, cacheControl, expires);
-	}
-
-	public static File compressFile(String file) {
-		try {
-			InputStream inputStream = null;
-			OutputStream outputStream = null;
-			try {
-				File gzippedFile = File.createTempFile("s3up_", null);
-				inputStream = new FileInputStream(file);
-				outputStream = new GZIPOutputStream(new FileOutputStream(gzippedFile));
-				ByteStreams.copy(inputStream, outputStream);
-				return gzippedFile;
-			} finally {
-				Closeables.close(inputStream, true);
-				Closeables.close(outputStream, true);
-			}
-		} catch (IOException e) {
-			throw new FatalException(e);
-		}
-	}
-
-	private static String extractRequiredOption(CommandLine commandLine, String optionName) {
-		if (commandLine.hasOption(optionName)) {
-			return commandLine.getOptionValue(optionName);
-		} else {
-			System.out.println("-" + optionName + " argument not found. Use -help parameter");
-			return null;
-		}
 	}
 
 }

@@ -1,14 +1,9 @@
-package me.vgv.s3up;
+package me.vgv.s3sync.s3up;
 
-import com.google.common.io.Files;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Vasily Vasilkov (vgv@vgv.me)

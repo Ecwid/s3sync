@@ -1,4 +1,4 @@
-package me.vgv.s3up;
+package me.vgv.s3sync.s3up;
 
 /**
  * @author Vasily Vasilkov (vgv@vgv.me)

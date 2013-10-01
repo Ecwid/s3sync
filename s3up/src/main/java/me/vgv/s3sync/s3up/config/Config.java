@@ -1,8 +1,8 @@
-package me.vgv.s3up.config;
+package me.vgv.s3sync.s3up.config;
 
 import com.google.common.collect.ImmutableList;
 import me.vgv.s3sync.common.config.S3Settings;
-import me.vgv.s3up.UploadFile;
+import me.vgv.s3sync.s3up.UploadFile;
 
 import java.util.Date;
 import java.util.List;

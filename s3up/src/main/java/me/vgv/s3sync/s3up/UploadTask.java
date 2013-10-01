@@ -1,13 +1,14 @@
-package me.vgv.s3up;
+package me.vgv.s3sync.s3up;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.StorageClass;
-import me.vgv.s3sync.common.FatalException;
-import me.vgv.s3up.config.Config;
+import me.vgv.s3sync.common.*;
+import me.vgv.s3sync.s3up.config.Config;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
@@ -37,7 +38,10 @@ public final class UploadTask implements Runnable {
 	private AmazonS3 getS3Client() {
 		AmazonS3 amazonS3 = S3_CLIENT.get();
 		if (amazonS3 == null) {
-			amazonS3 = new AmazonS3Client(new BasicAWSCredentials(config.getS3Settings().getAccessKey(), config.getS3Settings().getSecretKey()));
+			ClientConfiguration clientConfiguration = new ClientConfiguration();
+			clientConfiguration.setMaxErrorRetry(10);
+
+			amazonS3 = new AmazonS3Client(new BasicAWSCredentials(config.getS3Settings().getAccessKey(), config.getS3Settings().getSecretKey()), clientConfiguration);
 			S3_CLIENT.set(amazonS3);
 		}
 
@@ -72,7 +76,7 @@ public final class UploadTask implements Runnable {
 		// if gzipped - compress file
 		File file;
 		if (config.isGzipped()) {
-			file = Utils.compressFile(uploadFile.getFile());
+			file = me.vgv.s3sync.common.Utils.compressFile(uploadFile.getFile());
 			file.deleteOnExit();
 		} else {
 			file = new File(uploadFile.getFile());

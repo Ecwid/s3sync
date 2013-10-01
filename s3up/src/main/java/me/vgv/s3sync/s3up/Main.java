@@ -1,11 +1,8 @@
-package me.vgv.s3up;
+package me.vgv.s3sync.s3up;
 
-import me.vgv.s3up.config.Config;
-import org.apache.commons.cli.*;
+import me.vgv.s3sync.s3up.config.Config;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 

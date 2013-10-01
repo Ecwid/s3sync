@@ -1,12 +1,13 @@
 package me.vgv.s3sync.common;
 
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Closeables;
 import me.vgv.s3sync.common.config.S3Settings;
 import org.apache.commons.cli.CommandLine;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * @author Vasily Vasilkov (vgv@vgv.me)
@@ -82,5 +83,48 @@ public class Utils {
 		}
 
 		return new S3Settings(accessKey, secretKey, bucket);
+	}
+
+	public static String extractRequiredOption(CommandLine commandLine, String optionName) {
+		if (commandLine.hasOption(optionName)) {
+			return commandLine.getOptionValue(optionName);
+		} else {
+			System.out.println("-" + optionName + " argument not found. Use -help parameter");
+			return null;
+		}
+	}
+
+	public static File compressFile(String file) {
+		try {
+			InputStream inputStream = null;
+			OutputStream outputStream = null;
+			try {
+				File gzippedFile = File.createTempFile("s3sync_", null);
+				inputStream = new FileInputStream(file);
+				outputStream = new GZIPOutputStream(new FileOutputStream(gzippedFile));
+				ByteStreams.copy(inputStream, outputStream);
+				return gzippedFile;
+			} finally {
+				Closeables.close(inputStream, false);
+				Closeables.close(outputStream, false);
+			}
+		} catch (IOException e) {
+			throw new FatalException(e);
+		}
+	}
+
+	public static void saveStreamToFileAndClose(InputStream inputStream, String fileName) {
+		try {
+			FileOutputStream outputStream = null;
+			try {
+				outputStream = new FileOutputStream(fileName);
+				ByteStreams.copy(inputStream, outputStream);
+			} finally {
+				Closeables.close(inputStream, false);
+				Closeables.close(outputStream, false);
+			}
+		} catch (IOException e) {
+			throw new FatalException(e);
+		}
 	}
 }
