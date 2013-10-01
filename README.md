@@ -3,7 +3,9 @@ s3up
 
 Simple S3 upload tool
 
-Download: https://s3.amazonaws.com/vgv-public/s3up/s3up.jar
+Download:
+* https://s3.amazonaws.com/vgv-public/s3sync/s3up.jar
+* https://s3.amazonaws.com/vgv-public/s3sync/s3down.jar
 
 
 Examples:
