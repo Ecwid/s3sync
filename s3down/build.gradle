@@ -17,5 +17,5 @@ dependencies {
 jar {
 	// make fat-jar
 	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-	manifest { attributes 'Main-Class': 'me.vgv.s3sync.s3up.Main' }
+	manifest { attributes 'Main-Class': 'me.vgv.s3sync.s3down.Main' }
 }
