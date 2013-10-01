@@ -6,14 +6,11 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.StorageClass;
+import me.vgv.s3sync.common.FatalException;
 import me.vgv.s3up.config.Config;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
-import java.util.Collection;
-import java.util.Date;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author Vasily Vasilkov (vgv@vgv.me)
@@ -65,11 +62,11 @@ public final class UploadTask implements Runnable {
 		if (config.isGzipped()) {
 			objectMetadata.setContentEncoding("gzip");
 		}
-		if (config.getS3Settings().getCacheControl() != null) {
-			objectMetadata.setCacheControl(config.getS3Settings().getCacheControl());
+		if (config.getCacheControl() != null) {
+			objectMetadata.setCacheControl(config.getCacheControl());
 		}
-		if (config.getS3Settings().getExpires() != null) {
-			objectMetadata.setHttpExpiresDate(config.getS3Settings().getExpires());
+		if (config.getExpires() != null) {
+			objectMetadata.setHttpExpiresDate(config.getExpires());
 		}
 
 		// if gzipped - compress file
@@ -83,7 +80,7 @@ public final class UploadTask implements Runnable {
 
 		// create put request
 		PutObjectRequest putObjectRequest = new PutObjectRequest(config.getS3Settings().getBucket(), uploadFile.getKey(), file);
-		if (config.getS3Settings().isRrs()) {
+		if (config.isRrs()) {
 			putObjectRequest.setStorageClass(StorageClass.ReducedRedundancy);
 		}
 		putObjectRequest.withMetadata(objectMetadata);

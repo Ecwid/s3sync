@@ -16,6 +16,12 @@ subprojects {
 	}
 
 	dependencies {
+		// Guava
+		compile group: "com.google.guava", name: "guava", version: "14.0.1"
+
+		// Commons
+		compile group: "commons-cli", name: "commons-cli", version: "1.2"
+
 		// Test libs
 		testCompile group: "org.testng", name: "testng", version: "6.8.7"
 		testCompile group: "org.mockito", name: "mockito-all", version: "1.9.5"

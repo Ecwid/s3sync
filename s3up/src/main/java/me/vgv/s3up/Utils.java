@@ -3,17 +3,14 @@ package me.vgv.s3up;
 import com.amazonaws.util.DateUtils;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Closeables;
-import com.google.common.io.Closer;
+import me.vgv.s3sync.common.FatalException;
 import me.vgv.s3up.config.Config;
-import me.vgv.s3up.config.S3Settings;
+import me.vgv.s3sync.common.config.S3Settings;
 import org.apache.commons.cli.*;
 import org.apache.commons.cli.ParseException;
 
 import java.io.*;
-import java.text.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPOutputStream;
@@ -22,52 +19,6 @@ import java.util.zip.GZIPOutputStream;
  * @author Vasily Vasilkov (vgv@vgv.me)
  */
 public class Utils {
-
-	public static List<String> scanDirectory(File directory) {
-		List<String> result = new ArrayList<String>();
-
-		File[] files = directory.listFiles();
-		if (files != null) {
-			for (File item : files) {
-				if (item.isDirectory()) {
-					result.addAll(scanDirectory(item));
-				} else if (item.isFile()) {
-					result.add(item.getAbsolutePath());
-				}
-			}
-		}
-
-		return result;
-	}
-
-	public static Map<String, String> readCredFile(String filePath) {
-		Properties properties = new Properties();
-
-		FileInputStream inputStream = null;
-		try {
-			inputStream = new FileInputStream(filePath);
-			properties.load(inputStream);
-		} catch (IOException e) {
-			throw new FatalException(e);
-		} finally {
-			if (inputStream != null) {
-				try {
-					inputStream.close();
-				} catch (IOException e) {
-					// NOP
-				}
-			}
-		}
-
-		Map<String, String> result = new HashMap<String, String>();
-		for (String name : properties.stringPropertyNames()) {
-			String value = properties.getProperty(name);
-			if (value != null) {
-				result.put(name, value);
-			}
-		}
-		return result;
-	}
 
 	public static Date parseExpiresDate(String expires) {
 		final long DAY = 1000L * 86400;
@@ -95,40 +46,6 @@ public class Utils {
 		}
 	}
 
-	public static S3Settings parseS3Settings(CommandLine commandLine) {
-		Map<String, String> propsFromFile = new HashMap<String, String>();
-		if (commandLine.hasOption("credFile")) {
-			String credFile = commandLine.getOptionValue("credFile");
-			propsFromFile = readCredFile(credFile);
-		}
-
-		String accessKey = propsFromFile.get("accessKey");
-		if (commandLine.hasOption("accessKey")) {
-			accessKey = commandLine.getOptionValue("accessKey");
-		}
-
-		String secretKey = propsFromFile.get("secretKey");
-		if (commandLine.hasOption("secretKey")) {
-			secretKey = commandLine.getOptionValue("secretKey");
-		}
-
-		String bucket = null;
-		if (commandLine.hasOption("bucket")) {
-			bucket = commandLine.getOptionValue("bucket");
-		}
-
-		// rrs
-		boolean rrs = commandLine.hasOption("rrs");
-
-		// Content-Encoding
-		String cacheControl = commandLine.hasOption("cacheControl") ? commandLine.getOptionValue("cacheControl") : null;
-
-		// expires
-		Date expires = commandLine.hasOption("expires") ? parseExpiresDate(commandLine.getOptionValue("expires")) : null;
-
-		return new S3Settings(accessKey, secretKey, bucket, rrs, cacheControl, expires);
-	}
-
 	public static List<UploadFile> parseUploadFiles(CommandLine commandLine) {
 		// key
 		String key = extractRequiredOption(commandLine, "key");
@@ -152,7 +69,7 @@ public class Utils {
 		} else if (new File(local).isDirectory()) {
 			File directory = new File(local);
 
-			List<String> files = Utils.scanDirectory(directory);
+			List<String> files = me.vgv.s3sync.common.Utils.scanDirectory(directory);
 			List<UploadFile> uploadFiles = new ArrayList<UploadFile>();
 			for (String file : files) {
 				String part = file.substring(directory.getAbsolutePath().length());
@@ -201,7 +118,7 @@ public class Utils {
 		}
 
 		// S3settings
-		S3Settings s3Settings = parseS3Settings(commandLine);
+		S3Settings s3Settings = me.vgv.s3sync.common.Utils.parseS3Settings(commandLine);
 
 		// threads
 		String threadsStr = commandLine.getOptionValue("threads");
@@ -216,13 +133,23 @@ public class Utils {
 			}
 		}
 
+		// rrs
+		boolean rrs = commandLine.hasOption("rrs");
+
+		// Content-Encoding
+		String cacheControl = commandLine.hasOption("cacheControl") ? commandLine.getOptionValue("cacheControl") : null;
+
+		// expires
+		Date expires = commandLine.hasOption("expires") ? parseExpiresDate(commandLine.getOptionValue("expires")) : null;
+
+
 		// Content-Encoding
 		boolean gzipped = commandLine.hasOption("gzipped");
 
 		// upload files
 		List<UploadFile> uploadFiles = parseUploadFiles(commandLine);
 
-		return new Config(s3Settings, threads, gzipped, uploadFiles);
+		return new Config(s3Settings, threads, gzipped, uploadFiles, rrs, cacheControl, expires);
 	}
 
 	public static File compressFile(String file) {
