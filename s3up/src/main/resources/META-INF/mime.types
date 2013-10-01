@@ -1,6 +1,10 @@
 text/css						css
 text/html						html
+text/html						htm
 application/javascript			js
 image/gif						gif
+image/png						png
+image/jpeg						jpg
 application/vnd.ms-fontobject   eot
 application/font-woff			woff
+text/x-component				htc
