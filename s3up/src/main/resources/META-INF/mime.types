@@ -5,6 +5,7 @@ application/javascript			js
 image/gif						gif
 image/png						png
 image/jpeg						jpg
-application/vnd.ms-fontobject   eot
+application/vnd.ms-fontobject	eot
 application/font-woff			woff
 text/x-component				htc
+image/svg+xml					svg
