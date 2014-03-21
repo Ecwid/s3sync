@@ -3,8 +3,7 @@ jdk:
   - oraclejdk7
   - openjdk7
   - oraclejdk6
-  - openjdk6
 
 notifications:
   email:
-    - vgv@vgv.me
+    - vgv@ecwid.com
