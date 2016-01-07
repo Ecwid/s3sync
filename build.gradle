@@ -2,7 +2,6 @@ subprojects {
 	apply plugin: "java"
 
 	sourceCompatibility = 1.6
-	targetCompatibiliy = 1.6
 
 	// transitive dependency management is ugly, turn it off
 	configurations.all {
