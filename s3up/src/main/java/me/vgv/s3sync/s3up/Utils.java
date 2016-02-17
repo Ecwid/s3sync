@@ -97,6 +97,7 @@ public final class Utils {
 		options.addOption("threads", true, "Upload threads");
 		options.addOption("rrs", false, "Use Reduced Redundancy storage");
 		options.addOption("gzipped", false, "GZip content before uploading");
+		options.addOption("zopfli", false, "Zopfli content before uploading");
 		options.addOption("cacheControl", true, "Cache-Control header");
 		options.addOption("expires", true, "Expires header");
 		options.addOption("key", true, "S3 key");
@@ -143,12 +144,13 @@ public final class Utils {
 
 
 		// Content-Encoding
-		boolean gzipped = commandLine.hasOption("gzipped");
+		boolean useGzip = commandLine.hasOption("gzipped");
+		boolean useZopfli = commandLine.hasOption("zopfli");
 
 		// upload files
 		List<UploadFile> uploadFiles = parseUploadFiles(commandLine);
 
-		return new Config(s3Settings, threads, gzipped, uploadFiles, rrs, cacheControl, expires);
+		return new Config(s3Settings, threads, useGzip, useZopfli, uploadFiles, rrs, cacheControl, expires);
 	}
 
 }

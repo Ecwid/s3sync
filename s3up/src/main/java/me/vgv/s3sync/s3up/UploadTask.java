@@ -63,7 +63,7 @@ public final class UploadTask implements Runnable {
 		// configure headers
 		ObjectMetadata objectMetadata = new ObjectMetadata();
 		objectMetadata.setContentType(MIME_TYPES.get().getContentType(uploadFile.getFile()));
-		if (config.isGzipped()) {
+		if (config.isUseGzip() || config.isUseZopfli()) {
 			objectMetadata.setContentEncoding("gzip");
 		}
 		if (config.getCacheControl() != null) {
@@ -75,8 +75,11 @@ public final class UploadTask implements Runnable {
 
 		// if gzipped - compress file
 		File file;
-		if (config.isGzipped()) {
-			file = me.vgv.s3sync.common.Utils.compressFile(uploadFile.getFile());
+		if (config.isUseGzip()) {
+			file = me.vgv.s3sync.common.Utils.gzipFile(uploadFile.getFile());
+			file.deleteOnExit();
+		} else if (config.isUseZopfli()) {
+			file = me.vgv.s3sync.common.Utils.zopfliFile(uploadFile.getFile());
 			file.deleteOnExit();
 		} else {
 			file = new File(uploadFile.getFile());

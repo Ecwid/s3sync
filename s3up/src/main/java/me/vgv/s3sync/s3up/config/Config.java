@@ -17,13 +17,15 @@ public final class Config {
 	private final String cacheControl;
 	private final Date expires;
 	private final int threads;
-	private final boolean gzipped;
+	private final boolean useGzip;
+	private final boolean useZopfli;
 	private final List<UploadFile> uploadFiles;
 
-	public Config(S3Settings s3Settings, int threads, boolean gzipped, List<UploadFile> uploadFiles, boolean rrs, String cacheControl, Date expires) {
+	public Config(S3Settings s3Settings, int threads, boolean useGzip, boolean useZopfli, List<UploadFile> uploadFiles, boolean rrs, String cacheControl, Date expires) {
 		this.s3Settings = s3Settings;
 		this.threads = threads;
-		this.gzipped = gzipped;
+		this.useGzip = useGzip;
+		this.useZopfli = useZopfli;
 		this.rrs = rrs;
 		this.cacheControl = cacheControl;
 		this.expires = expires;
@@ -50,8 +52,12 @@ public final class Config {
 		return threads;
 	}
 
-	public boolean isGzipped() {
-		return gzipped;
+	public boolean isUseGzip() {
+		return useGzip;
+	}
+
+	public boolean isUseZopfli() {
+		return useZopfli;
 	}
 
 	public List<UploadFile> getUploadFiles() {
