@@ -100,6 +100,7 @@ public final class Utils {
 		options.addOption("zopfli", false, "Zopfli content before uploading");
 		options.addOption("cacheControl", true, "Cache-Control header");
 		options.addOption("expires", true, "Expires header");
+		options.addOption("charset", true, "Content-Type charset (UTF-8 by default)");
 		options.addOption("key", true, "S3 key");
 		options.addOption("local", true, "Local file or folder");
 
@@ -142,6 +143,8 @@ public final class Utils {
 		// expires
 		Date expires = commandLine.hasOption("expires") ? parseExpiresDate(commandLine.getOptionValue("expires")) : null;
 
+		// charset
+		String charset = commandLine.hasOption("charset") ? commandLine.getOptionValue("charset") : "UTF-8";
 
 		// Content-Encoding
 		boolean useGzip = commandLine.hasOption("gzipped");
@@ -150,7 +153,7 @@ public final class Utils {
 		// upload files
 		List<UploadFile> uploadFiles = parseUploadFiles(commandLine);
 
-		return new Config(s3Settings, threads, useGzip, useZopfli, uploadFiles, rrs, cacheControl, expires);
+		return new Config(s3Settings, threads, useGzip, useZopfli, uploadFiles, rrs, cacheControl, expires, charset);
 	}
 
 }

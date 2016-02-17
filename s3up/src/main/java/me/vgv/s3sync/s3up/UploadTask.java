@@ -62,13 +62,22 @@ public final class UploadTask implements Runnable {
 
 		// configure headers
 		ObjectMetadata objectMetadata = new ObjectMetadata();
-		objectMetadata.setContentType(MIME_TYPES.get().getContentType(uploadFile.getFile()));
+
+		// Content-Type header
+		String contentType = MIME_TYPES.get().getContentType(uploadFile.getFile());
+		contentType += "; charset=" + config.getCharset();
+		objectMetadata.setContentType(contentType);
+
+		// Content Encoding
 		if (config.isUseGzip() || config.isUseZopfli()) {
 			objectMetadata.setContentEncoding("gzip");
 		}
+
+		// Cache-Control
 		if (config.getCacheControl() != null) {
 			objectMetadata.setCacheControl(config.getCacheControl());
 		}
+		// Expires
 		if (config.getExpires() != null) {
 			objectMetadata.setHttpExpiresDate(config.getExpires());
 		}

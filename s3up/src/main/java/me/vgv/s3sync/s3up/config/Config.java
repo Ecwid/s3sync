@@ -16,12 +16,13 @@ public final class Config {
 	private final boolean rrs;
 	private final String cacheControl;
 	private final Date expires;
+	private final String charset;
 	private final int threads;
 	private final boolean useGzip;
 	private final boolean useZopfli;
 	private final List<UploadFile> uploadFiles;
 
-	public Config(S3Settings s3Settings, int threads, boolean useGzip, boolean useZopfli, List<UploadFile> uploadFiles, boolean rrs, String cacheControl, Date expires) {
+	public Config(S3Settings s3Settings, int threads, boolean useGzip, boolean useZopfli, List<UploadFile> uploadFiles, boolean rrs, String cacheControl, Date expires, String charset) {
 		this.s3Settings = s3Settings;
 		this.threads = threads;
 		this.useGzip = useGzip;
@@ -30,6 +31,7 @@ public final class Config {
 		this.cacheControl = cacheControl;
 		this.expires = expires;
 		this.uploadFiles = uploadFiles == null ? ImmutableList.<UploadFile>of() : ImmutableList.copyOf(uploadFiles);
+		this.charset = charset;
 	}
 
 	public S3Settings getS3Settings() {
@@ -62,5 +64,9 @@ public final class Config {
 
 	public List<UploadFile> getUploadFiles() {
 		return uploadFiles;
+	}
+
+	public String getCharset() {
+		return charset;
 	}
 }
