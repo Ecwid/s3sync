@@ -137,7 +137,7 @@ public final class Utils {
 		// rrs
 		boolean rrs = commandLine.hasOption("rrs");
 
-		// Content-Encoding
+		// Cache-Control
 		String cacheControl = commandLine.hasOption("cacheControl") ? commandLine.getOptionValue("cacheControl") : null;
 
 		// expires
