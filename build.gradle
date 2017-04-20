@@ -9,9 +9,7 @@ subprojects {
 	}
 
 	repositories {
-		maven {
-			url "http://nexus.vgv.me/content/groups/public"
-		}
+		mavenCentral()
 	}
 
 	dependencies {
