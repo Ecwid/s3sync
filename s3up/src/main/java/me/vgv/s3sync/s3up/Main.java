@@ -22,6 +22,7 @@ public class Main {
 
 		// parse config
 		Config config = Utils.parseConfig(args);
+		System.out.println("Will upload to bucket " + config.getS3Settings().getBucket());
 
 		long start = System.currentTimeMillis();
 
