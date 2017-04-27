@@ -3,11 +3,6 @@ subprojects {
 
 	sourceCompatibility = 1.6
 
-	// transitive dependency management is ugly, turn it off
-	configurations.all {
-		transitive = false
-	}
-
 	repositories {
 		mavenCentral()
 	}

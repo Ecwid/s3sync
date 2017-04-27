@@ -37,11 +37,7 @@ public final class Utils {
 				return new Date(System.currentTimeMillis() + length * YEAR);
 			}
 		} else {
-			try {
-				return new DateUtils().parseRfc822Date(expires);
-			} catch (java.text.ParseException e) {
-				throw new FatalException(e);
-			}
+			return DateUtils.parseRFC822Date(expires);
 		}
 	}
 
