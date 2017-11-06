@@ -6,6 +6,7 @@ import me.vgv.s3sync.s3up.UploadFile;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vasily Vasilkov (vgv@vgv.me)
@@ -17,12 +18,13 @@ public final class Config {
 	private final String cacheControl;
 	private final Date expires;
 	private final String charset;
+	private final Map<String,String> userMetadata;
 	private final int threads;
 	private final boolean useGzip;
 	private final boolean useZopfli;
 	private final List<UploadFile> uploadFiles;
 
-	public Config(S3Settings s3Settings, int threads, boolean useGzip, boolean useZopfli, List<UploadFile> uploadFiles, boolean rrs, String cacheControl, Date expires, String charset) {
+	public Config(S3Settings s3Settings, int threads, boolean useGzip, boolean useZopfli, List<UploadFile> uploadFiles, boolean rrs, String cacheControl, Date expires, String charset, Map<String,String> userMetadata) {
 		this.s3Settings = s3Settings;
 		this.threads = threads;
 		this.useGzip = useGzip;
@@ -32,6 +34,7 @@ public final class Config {
 		this.expires = expires;
 		this.uploadFiles = uploadFiles == null ? ImmutableList.<UploadFile>of() : ImmutableList.copyOf(uploadFiles);
 		this.charset = charset;
+		this.userMetadata = userMetadata;
 	}
 
 	public S3Settings getS3Settings() {
@@ -68,5 +71,9 @@ public final class Config {
 
 	public String getCharset() {
 		return charset;
+	}
+
+	public Map<String, String> getUserMetadata() {
+		return userMetadata;
 	}
 }

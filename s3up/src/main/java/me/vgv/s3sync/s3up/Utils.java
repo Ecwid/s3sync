@@ -1,16 +1,14 @@
 package me.vgv.s3sync.s3up;
 
 import com.amazonaws.util.DateUtils;
+import com.google.common.base.Splitter;
 import me.vgv.s3sync.common.FatalException;
 import me.vgv.s3sync.common.config.S3Settings;
 import me.vgv.s3sync.s3up.config.Config;
 import org.apache.commons.cli.*;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,6 +95,7 @@ public final class Utils {
 		options.addOption("cacheControl", true, "Cache-Control header");
 		options.addOption("expires", true, "Expires header");
 		options.addOption("charset", true, "Content-Type charset (UTF-8 by default)");
+		options.addOption("headers", true, "Semicolon-delimited list of key=value pairs for user metadata");
 		options.addOption("key", true, "S3 key");
 		options.addOption("local", true, "Local file or folder");
 
@@ -142,6 +141,14 @@ public final class Utils {
 		// charset
 		String charset = commandLine.hasOption("charset") ? commandLine.getOptionValue("charset") : "UTF-8";
 
+		// headers
+		Map<String, String> headers = commandLine.hasOption("headers") ?
+				Splitter.on(";")
+						.trimResults()
+						.withKeyValueSeparator("=")
+						.split(commandLine.getOptionValue("headers"))
+				: null;
+
 		// Content-Encoding
 		boolean useGzip = commandLine.hasOption("gzipped");
 		boolean useZopfli = commandLine.hasOption("zopfli");
@@ -149,7 +156,6 @@ public final class Utils {
 		// upload files
 		List<UploadFile> uploadFiles = parseUploadFiles(commandLine);
 
-		return new Config(s3Settings, threads, useGzip, useZopfli, uploadFiles, rrs, cacheControl, expires, charset);
+		return new Config(s3Settings, threads, useGzip, useZopfli, uploadFiles, rrs, cacheControl, expires, charset, headers);
 	}
-
 }
