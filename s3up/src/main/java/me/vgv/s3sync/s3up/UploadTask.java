@@ -82,6 +82,11 @@ public final class UploadTask implements Runnable {
 			objectMetadata.setHttpExpiresDate(config.getExpires());
 		}
 
+        //  User metadata
+        if (config.getUserMetadata() != null) {
+            objectMetadata.getUserMetadata().putAll(config.getUserMetadata());
+        }
+
 		// if gzipped - compress file
 		File file;
 		if (config.isUseGzip()) {
